@@ -1,0 +1,121 @@
+package com.IndividualProject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class TowerOfHanoi {
+
+    private static Map<Integer, Stack<Integer>> towers = new HashMap<>();
+
+    private static int sourceTower;
+    private static int destinationTower;
+
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        initTower();
+        while (!checkGameCompletion()) {
+            displayTowers();
+            userInput();
+            discMovement();
+        }
+        displayTowers();
+    }
+
+    private static void displayTowers() {
+        int spaces = 1;
+        System.out.println();
+        for (int i = 2; i >= 0; i--) {
+            for (int j = 0; j < 7; j++) {
+                System.out.print(" ");
+            }
+            try {
+                System.out.print("| " + towers.get(0).get(i) + " ");
+            } catch (Exception e) {
+                System.out.print("|   ");
+            }
+            try {
+                System.out.print("| " + towers.get(1).get(i) + " ");
+            } catch (Exception e) {
+                System.out.print("|   ");
+            }
+            try {
+                System.out.println("| " + towers.get(2).get(i) + " |");
+            } catch (Exception e) {
+                System.out.println("|   |");
+            }
+        }
+        System.out.println("       *************");
+        System.out.println("Tower:   1   2   3 ");
+        System.out.println("       *************");
+    }
+
+    private static boolean checkGameCompletion() {
+        boolean isGameComplete = false;
+        if(towers.get(2).size() == 3) {
+            System.out.println("** Winner ** Congratulations **");
+            isGameComplete = true;
+        }
+        return isGameComplete;
+    }
+
+
+    private static void discMovement() {
+        towers.get(destinationTower).push(towers.get(sourceTower).pop());
+    }
+
+    private static void userInput() {
+        boolean check = true;
+        while (check) {
+            check = false;
+            System.out.print("Enter the Source Tower: ");
+            sourceTower = scanner.nextInt();
+            check = validateSourceInput();
+        }
+
+        check = true;
+        while (check) {
+            check = false;
+            System.out.print("Enter the Destination Tower: ");
+            destinationTower = scanner.nextInt();
+            check = validateDestinationInput();
+        }
+    }
+
+    private static boolean validateDestinationInput() {
+        boolean check = false;
+        if(destinationTower < 0 || destinationTower > 2) {
+            System.out.println("!!! Please enter a valid input between the range 0 - 1 !!! ");
+            check = true;
+        } else if (towers.get(destinationTower).size() > 0 && towers.get(sourceTower).peek() > towers.get(destinationTower).peek()) {
+            System.out.println("[] Invalid Move, from " + sourceTower + " tower to " + destinationTower + " tower. Please try again");
+            check = true;
+        }
+        return check;
+    }
+
+    private static boolean validateSourceInput() {
+        boolean check = false;
+
+        if(sourceTower < 0 || sourceTower > 2) {
+            System.out.println("!!! Please enter a valid input between the range 0 - 1 !!! ");
+            check = true;
+        } else if (towers.get(sourceTower).size() == 0) {
+            System.out.println("<> No Disks available in at tower: " + sourceTower);
+            check = true;
+        }
+        return check;
+    }
+
+    private static void initTower() {
+        towers.put(0, new Stack<>());
+        towers.put(1, new Stack<>());
+        towers.put(2, new Stack<>());
+
+        towers.get(0).push(3);
+        towers.get(0).push(2);
+        towers.get(0).push(1);
+    }
+}
